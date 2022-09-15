@@ -31,7 +31,7 @@ const FlexDiv = styled.div`
     }
     // margin:${props=>(props.flexDirection==='column' && props.flexGap) && css`0 0 -${props.flexGap} 0`};
 
-    margin: ${props=>props.margin+'!important' || ""};
+    margin: ${props=>props.margin? props.margin+'!important':""};
 
     // css gap property integration
     gap: ${props=>props.gap || ""};

@@ -6,7 +6,7 @@ export const Layout = ()=>{
     return(
         <FlexDiv flex="1 1 100%" height="100%" minWidth="320px" flexDirection="column">
             <FlexDiv 
-                flex="1 0 80px" 
+                flex="0 1 80px" 
                 width="100%" 
                 justifyContent="flex-end" 
                 alignItems="center"

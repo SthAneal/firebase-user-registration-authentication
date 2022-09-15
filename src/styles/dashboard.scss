@@ -1,0 +1,129 @@
+$dark-blue: #17044b;
+$mix-blue: #3c3158; // for box-shadow
+$pink-blue: #901cf5; // bluish font
+$shade-blue: #34206b; // tab-capsule
+$pure-white: #ffffff;
+$dirty-white: #cfcfcf;
+$soft-white: #f7f7f7; // label background
+
+.dashboard {
+    background: radial-gradient(74.71% 39.98% at 49.97% 100%, rgba(102, 0, 183, 0.72) 0%, rgba(12, 53, 115, 0) 100%), radial-gradient(63.34% 63.34% at 50% 36.66%, rgba(58, 0, 183, 0.72) 0%, rgba(12, 53, 115, 0) 100%), rgb(19, 10, 42);
+    color: #fff;
+}
+
+.tab {
+    padding: 15px;
+    background-color: $dark-blue;
+    box-shadow: 0px 0px 7px 1px #3c3158;
+    border-radius: 5px;
+
+    &__capsule {
+        padding: 10px;
+        background-color: $shade-blue;
+        border: 1px solid $shade-blue;
+        font-weight: 300;
+        font-size: 1rem;
+        cursor: pointer;
+
+        &--selected,
+        &:hover {
+            color: $dirty-white;
+            border-bottom: 1px solid $pink-blue;
+        }
+
+        &:first-child {
+            border-radius: 4px 0 0 0;
+        }
+
+        &:last-child {
+            border-radius: 0 4px 0 0;
+        }
+    }
+
+    &__body {
+        padding: 15px;
+        background-color: $pure-white;
+        border-radius: 0 0 4px 4px;
+    }
+}
+
+.input-wrapper{
+    border: 1px solid $dirty-white;
+    border-radius: 4px;
+    & > label{
+        border-bottom: 1px solid $dirty-white;
+        padding: 5px;
+        width: 100%;
+        font-size: 0.8rem;
+        color: $pink-blue;
+        font-weight: 500;
+        border-radius: 4px 4px 0 0;
+        background-color: $soft-white;
+    }
+    & > input{
+        padding: 5px;
+        border-radius: 0 0 3px 3px;
+        border: none;
+        height: 35px;
+        width: 100%;
+        font-size: 1rem;
+        &:focus, &:active{
+            outline: solid $pink-blue;
+        }
+    }
+}
+
+button{
+    cursor: pointer;
+    padding: 10px 20px;
+    &.contained{
+        border: 1px solid $dark-blue;
+        box-shadow: 0px 0px 5px 0px $mix-blue;
+        border-radius: 4px;
+        &.primary{
+            background-color: $dark-blue;
+            color: $dirty-white;
+        }
+        &.secondary{
+            background-color: $dirty-white;
+            color: $dark-blue;
+        }
+        &:hover{
+            box-shadow: 0px 0px 5px 1px $mix-blue;
+        }
+    }
+    &.outlined{
+        border: 1px solid $dirty-white;
+        // box-shadow: 0px 0px 5px 0px $mix-blue;
+        border-radius: 4px;
+        background-color: transparent;
+        &:hover{
+            box-shadow:  0px 0px 4px -1px $mix-blue;
+        }
+        &.primary{
+            // background-color: $dirty-white;
+            color: $pink-blue;
+        }
+        &.secondary{
+            // background-color: $dirty-white;
+            color: $dark-blue;
+        }
+    }
+    &.text{
+        border: none;
+        background-color: transparent;
+        width: fit-content !important;
+        &.primary{
+            color: $pink-blue;
+            &:hover{
+                color: $dark-blue;
+            }
+        }
+        &.secondary{
+            color: $dirty-white;
+            &:hover{
+                color: $mix-blue;
+            }
+        }
+    }
+}
