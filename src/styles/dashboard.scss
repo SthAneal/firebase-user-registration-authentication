@@ -9,12 +9,20 @@ $soft-white: #f7f7f7; // label background
 .dashboard {
     background: radial-gradient(74.71% 39.98% at 49.97% 100%, rgba(102, 0, 183, 0.72) 0%, rgba(12, 53, 115, 0) 100%), radial-gradient(63.34% 63.34% at 50% 36.66%, rgba(58, 0, 183, 0.72) 0%, rgba(12, 53, 115, 0) 100%), rgb(19, 10, 42);
     color: #fff;
+    padding: 50px 0;
 }
 
+// define style for class authentication
+.authentication{
+    padding:15px;
+    overflow-y: scroll;
+}
+
+// define style for Authentication Tab
 .tab {
-    padding: 15px;
+    // padding: 15px;
     background-color: $dark-blue;
-    box-shadow: 0px 0px 7px 1px #3c3158;
+    // box-shadow: 0px 0px 7px 1px #3c3158;
     border-radius: 5px;
 
     &__capsule {
@@ -41,12 +49,19 @@ $soft-white: #f7f7f7; // label background
     }
 
     &__body {
-        padding: 15px;
+        padding: 50px 15px 15px;
         background-color: $pure-white;
         border-radius: 0 0 4px 4px;
+        &--sec{
+            &-hide{
+                display: none !important;
+            }
+        }
     }
 }
 
+
+// define style for Input component
 .input-wrapper{
     border: 1px solid $dirty-white;
     border-radius: 4px;
@@ -55,7 +70,7 @@ $soft-white: #f7f7f7; // label background
         padding: 5px;
         width: 100%;
         font-size: 0.8rem;
-        color: $pink-blue;
+        color: $shade-blue;
         font-weight: 500;
         border-radius: 4px 4px 0 0;
         background-color: $soft-white;
@@ -68,14 +83,17 @@ $soft-white: #f7f7f7; // label background
         width: 100%;
         font-size: 1rem;
         &:focus, &:active{
-            outline: solid $pink-blue;
+            outline: 1px solid $shade-blue;
         }
     }
 }
 
+
+// define style for Button component.
 button{
     cursor: pointer;
     padding: 10px 20px;
+    font-weight: 600;
     &.contained{
         border: 1px solid $dark-blue;
         box-shadow: 0px 0px 5px 0px $mix-blue;
@@ -85,7 +103,7 @@ button{
             color: $dirty-white;
         }
         &.secondary{
-            background-color: $dirty-white;
+            background-color: $pure-white;
             color: $dark-blue;
         }
         &:hover{
@@ -113,6 +131,7 @@ button{
         border: none;
         background-color: transparent;
         width: fit-content !important;
+        text-decoration: underline;
         &.primary{
             color: $pink-blue;
             &:hover{
@@ -126,4 +145,8 @@ button{
             }
         }
     }
+}
+
+.terms-condition{
+    color: $shade-blue;
 }
