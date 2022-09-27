@@ -56,6 +56,13 @@ $soft-white: #f7f7f7; // label background
             &-hide{
                 display: none !important;
             }
+            &-form{
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+                width: 100%;
+                align-items: center;
+            }
         }
     }
 }

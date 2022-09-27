@@ -3,6 +3,9 @@ import { FlexDiv } from "../styles/globalStyleComponent";
 import { Button } from "./Button";
 import { Input } from "./Input";
 
+import { createUserWithEmailAndPassword } from "firebase/auth"; 
+import { auth } from "../firebase";
+
 export const Auth = ()=>{
     // reference for NEW TO EVENTME? Tab and ALREADY REGISTERED? Tab
     const newToTab = useRef<HTMLDivElement>(null);
@@ -37,33 +40,55 @@ export const Auth = ()=>{
                 </FlexDiv>
                 <FlexDiv flex="1 1 auto" width="100%" className="tab__body" flexDirection="column">
                     <FlexDiv flex="1" width="100%" flexDirection="column" gap="20px" alignItems="center" className="tab__body--sec" ref={alreadyRegTab}>
-                        <Input label="EMAIL" type="email" name="email" labelFor="loginEmail" required={true}/>
-                        <Input label="PASSWORD" type="password" name="password" labelFor="loginPassword" required={true}/>
+                        <form onSubmit={()=>alert('logged In')} className="tab__body--sec-form">
+                            <Input label="EMAIL" type="email" name="email" labelFor="loginEmail" 
+                                pattern="^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$" 
+                                title="Should be a valid email"
+                                required={true}/>
 
-                        <Button typeVariant="contained" typeColor="primary">LOG IN</Button>
-                        {/* <Button typeVariant="contained" typeColor="secondary">LOG IN</Button>
-                        <Button typeVariant="outlined" typeColor="primary">LOG IN</Button>
-                        <Button typeVariant="outlined" typeColor="secondary">LOG IN</Button> */}
-                        <Button typeVariant="text" typeColor="primary">Forgot Password?</Button>
+                            <Input label="PASSWORD" type="password" name="password" labelFor="loginPassword" required={true}/>
+
+                            <Button typeVariant="contained" typeColor="primary">LOG IN</Button>
+                            {/* <Button typeVariant="contained" typeColor="secondary">LOG IN</Button>
+                            <Button typeVariant="outlined" typeColor="primary">LOG IN</Button>
+                            <Button typeVariant="outlined" typeColor="secondary">LOG IN</Button> */}
+                            <Button typeVariant="text" typeColor="primary">Forgot Password?</Button>
+                        </form>
                     </FlexDiv>
 
-
                     <FlexDiv flex="1" width="100%" flexDirection="column" gap="20px" alignItems="center" className="tab__body--sec tab__body--sec-hide" ref={newToTab}>
-                        <Input label="FIRST NAME" type="text" name="userFirstName" labelFor="userFirstName" required={true}/>
-                        <Input label="LAST NAME" type="text" name="userLastName" labelFor="userLastName" required={true}/>
+                        <form onSubmit={()=>alert('registered')} className="tab__body--sec-form">
+                            <Input label="FIRST NAME" type="text" name="userFirstName" labelFor="userFirstName" 
+                                pattern="^[a-zA-Z0-9]*$" 
+                                title="Atleast one number of letter" 
+                                required={true}/>
 
-                        <Input label="PHONE NUMBER" type="tel" name="userContactNo" labelFor="userPhone"
-                            pattern="[0-9]{4}-[0-9]{3}-[0-9]{3}"
-                            required={true}/>
+                            <Input label="LAST NAME" type="text" name="userLastName" labelFor="userLastName" 
+                                pattern="^[a-zA-Z0-9]*$" 
+                                title="Atleast one number of letter" 
+                                required={true}/>
+
+                            <Input label="PHONE NUMBER" type="tel" name="userContactNo" labelFor="userPhone"
+                                pattern="[0-9]{10}"
+                                title="any 10 digits number"
+                                required={true}/>
+                            
+                            <Input label="EMAIL" type="email" name="signupEmail" labelFor="signupEmail" 
+                                pattern="^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$" 
+                                title="Should be a valid email"
+                                required={true}/>
+
+
+                            <Input label="PASSWORD" type="password" name="password" labelFor="registerPassword" 
+                                pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s).{6,12}$"
+                                title="At least one lower case letter, one upper case letter, one digit,6 to 12 length and no spce."
+                                required={true}/>
+
+                            <Button typeVariant="contained" typeColor="primary">REGISTER IN</Button>
                         
-                        <Input label="EMAIL" type="email" name="signupEmail" labelFor="signupEmail" required={true}/>
-
-
-                        <Input label="PASSWORD" type="password" name="password" labelFor="registerPassword" required={true}/>
-
-                        <Button typeVariant="contained" typeColor="primary">REGISTER IN</Button>
-                       
-                        <FlexDiv className="terms-condition">Creating account means you will agree to our</FlexDiv> <Button typeVariant="text" typeColor="primary">Terms & Conditions</Button>
+                            <FlexDiv className="terms-condition">Creating account means you will agree to our</FlexDiv> <Button typeVariant="text" typeColor="primary">Terms & Conditions</Button>
+                        </form>
+                        
                     </FlexDiv>
 
                 </FlexDiv>

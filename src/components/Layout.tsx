@@ -18,7 +18,7 @@ export const Layout = ()=>{
                     <FlexDiv flex="0 0 auto" alignItem="center" className="top-menu__link--name">Home</FlexDiv>
                 </Link>
 
-                <Link to="/create-event" className="top-menu__link">
+                <Link to="/dashboard" className="top-menu__link">
                     <FlexDiv flex="0 0 auto" alignItem="center" className="top-menu__link--name">Create Event</FlexDiv>
                 </Link>
 

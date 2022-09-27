@@ -7,6 +7,8 @@ import { Auth } from "./components/Auth";
 import { CreateNewEvent } from "./components/CreateNewEvent";
 import { ViewEvents } from "./components/ViewEvents";
 
+import { DashboardProvider } from "./context/DashboardContext";
+
 // import { Login } from './components/Login';
 // import { Register } from './components/Register';
 // import { Woolie } from './components/Woolie';
@@ -38,10 +40,10 @@ function App() {
           <Route path="/faq" caseSensitive={false}/>
         </Route>
           
-        <Route path="/create-event" caseSensitive={false} element={<Dashboard/>}>
+        <Route path="/dashboard" caseSensitive={false} element={<DashboardProvider><Dashboard/></DashboardProvider>}>
           <Route index element={<Auth/>}/>
-          <Route path="/create-event/new" caseSensitive={false} element={<CreateNewEvent/>}/>
-          <Route path="/create-event/view" caseSensitive={false} element={<ViewEvents/>}/>
+          <Route path="/dashboard/event" caseSensitive={false} element={<ViewEvents/>}/>
+          <Route path="/dashboard/event/new" caseSensitive={false} element={<CreateNewEvent/>}/>
         </Route>
         <Route path="*" element={<Error/>}/>
       </Routes>
