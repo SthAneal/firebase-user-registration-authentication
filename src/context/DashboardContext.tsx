@@ -1,4 +1,7 @@
 import React from "react";
+// import google realtime database instance
+import { ref, set } from 'firebase/database';
+import { db } from "../firebase";
 
 /**
  * define Type User
@@ -6,7 +9,7 @@ import React from "react";
  * @author -- Anil
  */
 type User = {
-    id:number
+    id:string
     phone:number
 }
 
@@ -35,7 +38,8 @@ type DashboardStateType = {
  * @author -- Anil
  */
 type DashboardContextType = {
-    state:DashboardStateType    
+    state:DashboardStateType
+    addNewUser:(userId:string, firstName:string, lastName:string, phone:number)=>void    
 }
 
 /**
@@ -53,17 +57,22 @@ type DashboardProviderType = {
  * @author -- Anil
  */
 type DashboardAction = {
-    type: 'GET_USER'
+    type: 'GET_USER' | 'SET_USER'
     payload:{
-        user:User
-        event:Event
+        user?:User
+        event?:Event
     }
 }
 
-const reducer = (state:DashboardStateType,action:DashboardAction)=>{
+const reducer = (state:DashboardStateType,action:DashboardAction):DashboardStateType=>{
     switch(action.type){
         case 'GET_USER':{
+            // return {...state,user:action.payload.user};
             return state;
+        }
+        case 'SET_USER':{
+            return {...state,user:action.payload.user!};
+            //return state;
         }
         default:{
             return state
@@ -87,8 +96,29 @@ export const DashboardProvider = ({children}:DashboardProviderType)=>{
 
     const [state, dispatch] = React.useReducer(reducer, initialState);
 
+    /**
+     * Add users into the realtime data-base
+     * @params userId -- string: user id created during the authentication
+     * @params firstName -- string: user first name
+     * @params lastName -- string: user last name
+     * @params phone -- number: user phone number
+     * @author: Anil
+     */
+    const addNewUser = (userId:string, firstName:string, lastName:string, phone:number)=>{
+        set(ref(db, `/${userId}`), {firstName, lastName, phone})
+        .then(()=>{
+            console.log('user successfully created');
+            dispatch({type:'SET_USER', payload:{user:{id:userId, phone}}});
+        }).catch((error)=>{
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.error('error code = ', errorCode);
+            console.error('error message = ', errorMessage);
+        });
+    }
+
     return(
-        <DashboardContext.Provider value={{state}}>
+        <DashboardContext.Provider value={{state, addNewUser}}>
             {children}
         </DashboardContext.Provider>
     )
