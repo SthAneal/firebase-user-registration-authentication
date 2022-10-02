@@ -1,6 +1,10 @@
-import React from "react";
+import React, {useEffect} from "react";
+
 // import google realtime database instance
-import { ref, set } from 'firebase/database';
+import { onAuthStateChanged } from "firebase/auth"; 
+import { auth } from "../firebase";
+
+import { ref, set, onValue } from 'firebase/database';
 import { db } from "../firebase";
 
 /**
@@ -11,6 +15,7 @@ import { db } from "../firebase";
 type User = {
     id:string
     phone:number
+    isVerified:boolean
 }
 
 /**
@@ -38,8 +43,8 @@ type DashboardStateType = {
  * @author -- Anil
  */
 type DashboardContextType = {
-    state:DashboardStateType
-    addNewUser:(userId:string, firstName:string, lastName:string, phone:number)=>void    
+    dashboardState:DashboardStateType
+    addNewUser:(userId:string, firstName:string, lastName:string, phone:number, isVerified:boolean)=>void    
 }
 
 /**
@@ -57,12 +62,14 @@ type DashboardProviderType = {
  * @author -- Anil
  */
 type DashboardAction = {
-    type: 'GET_USER' | 'SET_USER'
+    type: 'GET_USER' | 'SET_USER' | 'SET_EMAIL_VERIFIED'
     payload:{
         user?:User
         event?:Event
+        isVerified?:boolean
     }
 }
+
 
 const reducer = (state:DashboardStateType,action:DashboardAction):DashboardStateType=>{
     switch(action.type){
@@ -73,6 +80,10 @@ const reducer = (state:DashboardStateType,action:DashboardAction):DashboardState
         case 'SET_USER':{
             return {...state,user:action.payload.user!};
             //return state;
+        }
+        case 'SET_EMAIL_VERIFIED':{
+            // return {...state, user:{...state.user, isVerified:action.payload.isVerified!}}
+            return {...state, user:action.payload.user!}
         }
         default:{
             return state
@@ -94,7 +105,7 @@ export const DashboardContext = React.createContext({} as DashboardContextType);
 
 export const DashboardProvider = ({children}:DashboardProviderType)=>{ 
 
-    const [state, dispatch] = React.useReducer(reducer, initialState);
+    const [dashboardState, dispatch] = React.useReducer(reducer, initialState);
 
     /**
      * Add users into the realtime data-base
@@ -104,11 +115,11 @@ export const DashboardProvider = ({children}:DashboardProviderType)=>{
      * @params phone -- number: user phone number
      * @author: Anil
      */
-    const addNewUser = (userId:string, firstName:string, lastName:string, phone:number)=>{
+    const addNewUser = (userId:string, firstName:string, lastName:string, phone:number, isVerified:boolean)=>{
         set(ref(db, `/${userId}`), {firstName, lastName, phone})
         .then(()=>{
             console.log('user successfully created');
-            dispatch({type:'SET_USER', payload:{user:{id:userId, phone}}});
+            dispatch({type:'SET_USER', payload:{user:{id:userId, phone, isVerified }}});
         }).catch((error)=>{
             const errorCode = error.code;
             const errorMessage = error.message;
@@ -117,8 +128,39 @@ export const DashboardProvider = ({children}:DashboardProviderType)=>{
         });
     }
 
+    
+
+    useEffect(()=>{
+        const unsubscribe = onAuthStateChanged(auth, (currentUser)=>{
+            if(currentUser){
+
+                onValue(ref(db, `/${currentUser.uid}`),(snapshot)=>{
+                    const data = snapshot.val();
+                    console.log(data);
+                    if(data && data !== null){
+                        // const tempData = Object.values(data);
+                        // Object.values(data).map((note)=>{
+                        //     return refreshAllNote(note);
+                        // })
+                        // refreshAllNote(tempData!);
+
+                        // console.log(tempData);
+
+                       dispatch({type:'SET_USER', payload:{user:{id:currentUser.uid, phone:data.phone, isVerified:currentUser.emailVerified}}});
+                    }
+                })
+
+            }
+        }); 
+
+        return ()=>{
+            unsubscribe();
+        };        
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[]);
+
     return(
-        <DashboardContext.Provider value={{state, addNewUser}}>
+        <DashboardContext.Provider value={{dashboardState, addNewUser}}>
             {children}
         </DashboardContext.Provider>
     )

@@ -5,6 +5,7 @@ import { Landing } from "./components/Landing";
 import { Dashboard } from "./components/Dashboard";
 import { Auth } from "./components/Auth";
 import { CreateNewEvent } from "./components/CreateNewEvent";
+import { VerifyEmail } from "./components/VerifyEmail";
 import { ViewEvents } from "./components/ViewEvents";
 
 import { DashboardProvider } from "./context/DashboardContext";
@@ -44,6 +45,7 @@ function App() {
           <Route index element={<Auth/>}/>
           <Route path="/dashboard/event" caseSensitive={false} element={<ViewEvents/>}/>
           <Route path="/dashboard/event/new" caseSensitive={false} element={<CreateNewEvent/>}/>
+          <Route path="/dashboard/send-v-link" caseSensitive={false} element={<VerifyEmail/>}/>
         </Route>
         <Route path="*" element={<Error/>}/>
       </Routes>

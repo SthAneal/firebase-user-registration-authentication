@@ -1,9 +1,10 @@
-import React, { useRef, useState, useContext } from "react";
+import React, { useRef, useState, useContext, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { FlexDiv } from "../styles/globalStyleComponent";
 import { Button } from "./Button";
 import { Input } from "./Input";
 
-import { createUserWithEmailAndPassword } from "firebase/auth"; 
+import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth"; 
 import { auth, db } from "../firebase";
 
 import { DashboardContext } from "../context/DashboardContext";
@@ -14,6 +15,7 @@ export const Auth = ()=>{
         emailError:string
     }
 
+
     const [authErrorMessage,setErrorMessage] = useState({} as AuthErrorMessageType);
 
     const { addNewUser } = useContext(DashboardContext);
@@ -21,6 +23,13 @@ export const Auth = ()=>{
     // reference for NEW TO EVENTME? Tab and ALREADY REGISTERED? Tab
     const newToTab = useRef<HTMLDivElement>(null);
     const alreadyRegTab = useRef<HTMLDivElement>(null);
+
+    /**
+     * Toggles the tab
+     * @param e : React.Mouse Event
+     * @param tab : determines the targeted tab to be opened
+     * @author Anil
+     */
 
     const toggleTab = (e:React.MouseEvent<HTMLElement>, tab:React.RefObject<HTMLDivElement>)=>{
         const tabsBody = document.getElementsByClassName('tab__body--sec');
@@ -41,6 +50,12 @@ export const Auth = ()=>{
         tab.current?.classList.remove('tab__body--sec-hide');
     }
 
+    /**
+     * Registers a user
+     * @param e :React.SyntheticEvent to retrieve the form element using 
+     * type assertion
+     * @author Anil
+     */
     const registreUser = (e:React.SyntheticEvent)=>{
         e.preventDefault();
         
@@ -51,7 +66,6 @@ export const Auth = ()=>{
             userContactNo:{value:number};
             signupEmail:{value:string};
             password:{value:string}
-
         };
         // retriev the value of registration
         const userFirstName = target.userFirstName.value;
@@ -64,17 +78,30 @@ export const Auth = ()=>{
         createUserWithEmailAndPassword(auth, signupEmail, password)
         .then((userCredential)=>{
             const user = userCredential.user;
-            addNewUser(user.uid, userFirstName, userLastName, userContactNo);
-            setErrorMessage({} as AuthErrorMessageType);
-            console.log(user);
+            
+            // send email verification link to the user
+            sendEmailVerification(user,{url:'http://localhost:3000/dashboard',handleCodeInApp:true})
+            .then(()=>{
+                alert("An email verification link has been sent to your email. Please verify the email by clicking the link.");
+
+                // call addNewUser() to add the user info into realtime database.
+                addNewUser(user.uid, userFirstName, userLastName, userContactNo, user.emailVerified);
+
+                // reset validation errors if any.
+                setErrorMessage({} as AuthErrorMessageType);
+                console.log(user);
+            }).catch((error)=>{
+                console.log(error.message);
+            });
         }).catch((error)=>{
             // const errorCode = error.code;
             // const errorMessage = error.message;
             setErrorMessage({...authErrorMessage,emailError:'Email already in use.'});
             console.log(error);
         });
-
     }
+
+
 
     return (
         <FlexDiv flex="1 1 auto" minHeight="100%" justifyContent="center" alignItems="center" className="authentication"> 
