@@ -1,11 +1,10 @@
 import React, {useEffect} from "react";
 
 // import google realtime database instance
-import { onAuthStateChanged } from "firebase/auth"; 
-import { auth } from "../firebase";
+import { onAuthStateChanged, signOut } from "firebase/auth"; 
 
 import { ref, set, onValue } from 'firebase/database';
-import { db } from "../firebase";
+import { auth, db } from "../firebase";
 
 /**
  * define Type User
@@ -45,6 +44,7 @@ type DashboardStateType = {
 type DashboardContextType = {
     dashboardState:DashboardStateType
     addNewUser:(userId:string, firstName:string, lastName:string, phone:number, isVerified:boolean)=>void    
+    logOut:()=>void
 }
 
 /**
@@ -64,7 +64,7 @@ type DashboardProviderType = {
 type DashboardAction = {
     type: 'GET_USER' | 'SET_USER' | 'SET_EMAIL_VERIFIED'
     payload:{
-        user?:User
+        user?:User | null
         event?:Event
         isVerified?:boolean
     }
@@ -128,12 +128,17 @@ export const DashboardProvider = ({children}:DashboardProviderType)=>{
         });
     }
 
-    
+    /**
+     * This function calls firebase signOut() for authentication
+     * @author Anil
+     */
+    const logOut = ()=>{
+        signOut(auth);
+    }
 
     useEffect(()=>{
         const unsubscribe = onAuthStateChanged(auth, (currentUser)=>{
             if(currentUser){
-
                 onValue(ref(db, `/${currentUser.uid}`),(snapshot)=>{
                     const data = snapshot.val();
                     console.log(data);
@@ -148,19 +153,19 @@ export const DashboardProvider = ({children}:DashboardProviderType)=>{
 
                        dispatch({type:'SET_USER', payload:{user:{id:currentUser.uid, phone:data.phone, isVerified:currentUser.emailVerified}}});
                     }
-                })
-
+                });
+            }else{
+                dispatch({type:'SET_USER', payload:{user:null}});
             }
         }); 
 
         return ()=>{
             unsubscribe();
         };        
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     },[]);
 
     return(
-        <DashboardContext.Provider value={{dashboardState, addNewUser}}>
+        <DashboardContext.Provider value={{dashboardState, addNewUser, logOut}}>
             {children}
         </DashboardContext.Provider>
     )

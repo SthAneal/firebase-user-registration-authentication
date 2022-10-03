@@ -67,6 +67,10 @@ $soft-white: #f7f7f7; // label background
     }
 }
 
+// define style for error message
+.error-message{
+    color: red;
+}
 
 // define style for Input component
 .input-wrapper{
@@ -82,7 +86,7 @@ $soft-white: #f7f7f7; // label background
         border-radius: 4px 4px 0 0;
         background-color: $soft-white;
         & .error-message{
-            color: red;
+            @extend .error-message;
             margin-left: 30px;
         }
     }

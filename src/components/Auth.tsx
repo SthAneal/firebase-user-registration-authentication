@@ -4,7 +4,7 @@ import { FlexDiv } from "../styles/globalStyleComponent";
 import { Button } from "./Button";
 import { Input } from "./Input";
 
-import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth"; 
+import { createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailAndPassword } from "firebase/auth"; 
 import { auth, db } from "../firebase";
 
 import { DashboardContext } from "../context/DashboardContext";
@@ -13,6 +13,7 @@ export const Auth = ()=>{
 
     type AuthErrorMessageType = {
         emailError:string
+        loginError:string
     }
 
 
@@ -101,7 +102,42 @@ export const Auth = ()=>{
         });
     }
 
+    /**
+     * login based on email as user name and password
+     * @param e 
+     * @author Anil
+     */
+    const loginUser = (e:React.SyntheticEvent)=>{
+        e.preventDefault();
+        // type assertion to define login fields
+        const target = e.target as typeof e.target & {
+            email:{value:string};
+            password:{value:string};
+        }
 
+        // retriev the value of the login field
+        const email = target.email.value;
+        const password = target.password.value;
+
+        // login user using firebase auth
+
+        //import { getAuth,  } from "firebase/auth";
+
+        signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+            // Signed in 
+            //const user = userCredential.user;
+            setErrorMessage({} as AuthErrorMessageType);
+            console.log('Login Successfull');
+        })
+        .catch((error) => {
+            // const errorCode = error.code;
+            // const errorMessage = error.message;
+            setErrorMessage({...authErrorMessage, loginError:'Invalid Credentials'});
+            console.log(error);
+        });
+
+    }
 
     return (
         <FlexDiv flex="1 1 auto" minHeight="100%" justifyContent="center" alignItems="center" className="authentication"> 
@@ -112,7 +148,9 @@ export const Auth = ()=>{
                 </FlexDiv>
                 <FlexDiv flex="1 1 auto" width="100%" className="tab__body" flexDirection="column">
                     <FlexDiv flex="1" width="100%" flexDirection="column" gap="20px" alignItems="center" className="tab__body--sec" ref={alreadyRegTab}>
-                        <form onSubmit={(e)=>alert('logged In')} className="tab__body--sec-form">
+                        <form onSubmit={loginUser} className="tab__body--sec-form">
+                            {/* to display the login error message */}
+                            { authErrorMessage.loginError?<FlexDiv flex="0 0 auto" alignItems="flex-strart" width="100%" className="error-message">{authErrorMessage.loginError} !!!</FlexDiv>:''}
                             <Input label="EMAIL" type="email" name="email" labelFor="loginEmail" 
                                 pattern="^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$" 
                                 title="Should be a valid email"

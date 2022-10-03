@@ -8,8 +8,12 @@ import { auth } from "../firebase";
 export const VerifyEmail = ()=>{
     let user: User | null;
 
+    /**
+     * send verification email to the registered user
+     * @author Anil
+     */
     const sendVerification = ()=>{
-        sendEmailVerification(user!).then(()=>{
+        sendEmailVerification(user!, {url:'http://localhost:3000/dashboard',handleCodeInApp:true}).then(()=>{
             alert("An email verification link has been sent to your email. Please verify the email by clicking the link.");
         }).catch((error)=>{
             console.log(error.message);
@@ -25,8 +29,6 @@ export const VerifyEmail = ()=>{
         return ()=>{
             unsubscribe();
         };
-
-     
     },[])
 
     return(
