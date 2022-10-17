@@ -2,6 +2,12 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## A Quick Note
+
+It is a part of an ongoing project supposed to be open-source. I thought, the user registration, user authorisation, email verification, and forgot password modules would be help full to other. So I am providing this code base. Please feel free to use the source code.
+
+For the firebase configuration, please use the configuration based on your firebase app.
+
 ## Available Scripts
 
 In the project directory, you can run:
