@@ -1,24 +1,25 @@
-import React, { useRef, useState, useContext, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useRef, useState, useContext } from "react";
 import { FlexDiv } from "../styles/globalStyleComponent";
 import { Button } from "./Button";
 import { Input } from "./Input";
 
-import { createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailAndPassword } from "firebase/auth"; 
-import { auth, db } from "../firebase";
+import { createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth"; 
+import { auth } from "../firebase";
 
 import { DashboardContext } from "../context/DashboardContext";
 
 export const Auth = ()=>{
-
+    
+    // define error message type
     type AuthErrorMessageType = {
         emailError:string
         loginError:string
     }
 
-
+    // define state to associate to error message
     const [authErrorMessage,setErrorMessage] = useState({} as AuthErrorMessageType);
 
+    // import addNewUser from DashboardContext
     const { addNewUser } = useContext(DashboardContext);
 
     // reference for NEW TO EVENTME? Tab and ALREADY REGISTERED? Tab
@@ -31,7 +32,6 @@ export const Auth = ()=>{
      * @param tab : determines the targeted tab to be opened
      * @author Anil
      */
-
     const toggleTab = (e:React.MouseEvent<HTMLElement>, tab:React.RefObject<HTMLDivElement>)=>{
         const tabsBody = document.getElementsByClassName('tab__body--sec');
         const tabCapsule = document.getElementsByClassName('tab__capsule');
@@ -139,6 +139,34 @@ export const Auth = ()=>{
 
     }
 
+    /**
+     * send password reset link to the nominated email address.
+     * @param e : React synthetic event
+     * @author: Anil
+     */
+    const sentPasswordResetLink = (e:React.SyntheticEvent)=>{
+        // e.stopPropagation();
+        e.preventDefault();
+        let userEmail = prompt("Enter your valid email address.");
+        // eslint-disable-next-line no-useless-escape
+        let emailRegx = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        if(userEmail){
+            if(userEmail.match(emailRegx)){
+                console.log(userEmail);
+                sendPasswordResetEmail(auth, userEmail, {url:'http://localhost:3000/dashboard',handleCodeInApp:true})
+                .then(() => {
+                    alert("Password reset link is successfully sent to your Email.");
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+            }else{
+                alert("Please try entering correct email address.");
+            }
+        }
+
+    }
+
     return (
         <FlexDiv flex="1 1 auto" minHeight="100%" justifyContent="center" alignItems="center" className="authentication"> 
             <FlexDiv flex="0 1 500px"  className="tab" flexDirection="column" justifyContent="start" gap="5px">
@@ -162,6 +190,8 @@ export const Auth = ()=>{
                             {/* <Button typeVariant="contained" typeColor="secondary">LOG IN</Button>
                             <Button typeVariant="outlined" typeColor="primary">LOG IN</Button>
                             <Button typeVariant="outlined" typeColor="secondary">LOG IN</Button> */}
+                        </form>
+                        <form onSubmit={sentPasswordResetLink}>
                             <Button typeVariant="text" typeColor="primary">Forgot Password?</Button>
                         </form>
                     </FlexDiv>
@@ -197,7 +227,7 @@ export const Auth = ()=>{
 
                             <Button typeVariant="contained" typeColor="primary">REGISTER IN</Button>
                         
-                            <FlexDiv className="terms-condition">Creating account means you will agree to our</FlexDiv> <Button typeVariant="text" typeColor="primary">Terms & Conditions</Button>
+                            <FlexDiv className="terms-condition">Creating account means you will agree to our</FlexDiv> <Button typeVariant="text" typeColor="primary" onClickFnc={()=>{alert('Terms & Condition.')}}>Terms & Conditions</Button>
                         </form>
                         
                     </FlexDiv>

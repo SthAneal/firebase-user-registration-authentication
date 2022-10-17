@@ -1,3 +1,5 @@
+import React from "react"
+
 type ButtonPropType = {
     children:React.ReactNode
     typeVariant:'contained'|'outlined'|'text'
